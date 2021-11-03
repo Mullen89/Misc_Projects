@@ -4,9 +4,12 @@ import display.Display;
 import graphics.Assets;
 import graphics.ImageLoader;
 import graphics.SpriteSheet;
+import states.GameState;
+import states.StateManager;
 
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.lang.Thread.State;
 import java.awt.Graphics;
 
 public class Game implements Runnable {
@@ -16,6 +19,9 @@ public class Game implements Runnable {
     private boolean running;
     private BufferStrategy bs;
     private Graphics g;
+
+    // States
+    private StateManager gameState;
 
     private String title;
     private int height;
@@ -28,7 +34,9 @@ public class Game implements Runnable {
     }
 
     private void tick() {
-
+        if (StateManager.getCurrentState() != null) {
+            StateManager.getCurrentState().tick();
+        }
     }
 
     private void render() {
@@ -40,14 +48,16 @@ public class Game implements Runnable {
         g = bs.getDrawGraphics();
 
         // Draws out the terrain
-        for (int i = 0; i < display.getWidth(); i += 35) {
-            for (int j = 0; j < display.getHeight(); j += 35) {
-                g.drawImage(Assets.grass, i, j, null);
-            }
-        }
+        // for (int i = 0; i < display.getWidth(); i += 35) {
+        // for (int j = 0; j < display.getHeight(); j += 35) {
+        // g.drawImage(Assets.grass, i, j, null);
+        // }
+        // }
 
         // Draws player
-        g.drawImage(Assets.player, 400, 300, null);
+        if (StateManager.getCurrentState() != null) {
+            StateManager.getCurrentState().render(g);
+        }
 
         bs.show();
         g.dispose();
@@ -60,6 +70,9 @@ public class Game implements Runnable {
     private void init() {
         display = new Display(title, height, width);
         Assets.init();
+
+        gameState = new GameState();
+        StateManager.setState(gameState);
     }
 
     @Override
