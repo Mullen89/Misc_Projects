@@ -1,7 +1,9 @@
 package main;
 
 import display.Display;
-import display.ImageLoader;
+import graphics.ImageLoader;
+import graphics.SpriteSheet;
+
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics;
@@ -14,6 +16,10 @@ public class Game implements Runnable {
     private BufferStrategy bs;
     private Graphics g;
     private String imagesFilePath = "../res/textures/";
+
+    private BufferedImage masterImage;
+    private BufferedImage sprite1;
+    private SpriteSheet sheet;
 
     private String title;
     private int height;
@@ -36,8 +42,9 @@ public class Game implements Runnable {
             display.getCanvas().createBufferStrategy(3);
             return;
         }
-        clear(g);
+        // clear(g);
         g = bs.getDrawGraphics();
+        g.drawImage(sprite1, 400, 300, null);
 
         bs.show();
         g.dispose();
@@ -49,7 +56,9 @@ public class Game implements Runnable {
 
     private void init() {
         display = new Display(title, height, width);
-        // testImage = ImageLoader.loadImage(imagesFilePath + "smile.png");
+        masterImage = ImageLoader.loadImage(imagesFilePath + "sprite_sheet_1-2.png");
+        sheet = new SpriteSheet(masterImage);
+        sprite1 = sheet.cropSheet(2, 1);
     }
 
     @Override
