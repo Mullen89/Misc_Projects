@@ -21,6 +21,14 @@ public class Display {
         createDisplay();
     }
 
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
     private void createDisplay() {
         frame = new JFrame(title);
         frame.setSize(width, height);

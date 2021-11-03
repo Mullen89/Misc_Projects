@@ -18,8 +18,11 @@ public class Game implements Runnable {
     private String imagesFilePath = "../res/textures/";
 
     private BufferedImage masterImage;
+    private BufferedImage terrainImage;
     private BufferedImage sprite1;
+    private BufferedImage grassSprite;
     private SpriteSheet sheet;
+    private SpriteSheet terrain;
 
     private String title;
     private int height;
@@ -42,8 +45,12 @@ public class Game implements Runnable {
             display.getCanvas().createBufferStrategy(3);
             return;
         }
-        // clear(g);
         g = bs.getDrawGraphics();
+        for (int i = 0; i < display.getWidth(); i += 35) {
+            for (int j = 0; j < display.getHeight(); j += 35) {
+                g.drawImage(grassSprite, i, j, null);
+            }
+        }
         g.drawImage(sprite1, 400, 300, null);
 
         bs.show();
@@ -56,9 +63,13 @@ public class Game implements Runnable {
 
     private void init() {
         display = new Display(title, height, width);
-        masterImage = ImageLoader.loadImage(imagesFilePath + "sprite_sheet_1-2.png");
+        masterImage = ImageLoader.loadImage(imagesFilePath + "sprite_sheet_1.png");
+        terrainImage = ImageLoader.loadImage(imagesFilePath + "terrain_sheet_1.png");
         sheet = new SpriteSheet(masterImage);
+        terrain = new SpriteSheet(terrainImage);
         sprite1 = sheet.cropSheet(2, 1);
+        grassSprite = terrain.cropSheet(0, 0);
+
     }
 
     @Override
