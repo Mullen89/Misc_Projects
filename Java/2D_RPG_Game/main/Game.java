@@ -1,6 +1,7 @@
 package main;
 
 import display.Display;
+import graphics.Assets;
 import graphics.ImageLoader;
 import graphics.SpriteSheet;
 
@@ -15,21 +16,12 @@ public class Game implements Runnable {
     private boolean running;
     private BufferStrategy bs;
     private Graphics g;
-    private String imagesFilePath = "../res/textures/";
-
-    private BufferedImage masterImage;
-    private BufferedImage terrainImage;
-    private BufferedImage sprite1;
-    private BufferedImage grassSprite;
-    private SpriteSheet sheet;
-    private SpriteSheet terrain;
 
     private String title;
     private int height;
     private int width;
 
     public Game(String title, int height, int width) {
-
         this.title = title;
         this.height = height;
         this.width = width;
@@ -46,12 +38,16 @@ public class Game implements Runnable {
             return;
         }
         g = bs.getDrawGraphics();
+
+        // Draws out the terrain
         for (int i = 0; i < display.getWidth(); i += 35) {
             for (int j = 0; j < display.getHeight(); j += 35) {
-                g.drawImage(grassSprite, i, j, null);
+                g.drawImage(Assets.grass, i, j, null);
             }
         }
-        g.drawImage(sprite1, 400, 300, null);
+
+        // Draws player
+        g.drawImage(Assets.player, 400, 300, null);
 
         bs.show();
         g.dispose();
@@ -63,22 +59,28 @@ public class Game implements Runnable {
 
     private void init() {
         display = new Display(title, height, width);
-        masterImage = ImageLoader.loadImage(imagesFilePath + "sprite_sheet_1.png");
-        terrainImage = ImageLoader.loadImage(imagesFilePath + "terrain_sheet_1.png");
-        sheet = new SpriteSheet(masterImage);
-        terrain = new SpriteSheet(terrainImage);
-        sprite1 = sheet.cropSheet(2, 1);
-        grassSprite = terrain.cropSheet(0, 0);
-
+        Assets.init();
     }
 
     @Override
     public void run() {
         init();
 
+        int fps = 60;
+        double timePerTick = 1000000000 / fps;
+        double delta = 0;
+        long now;
+        long lastTime = System.nanoTime();
+
         while (running) {
-            tick();
-            render();
+            now = System.nanoTime();
+            ;
+            delta += (now - lastTime) / timePerTick;
+
+            if (delta >= 1) {
+                tick();
+                render();
+            }
         }
         stop();
     }
