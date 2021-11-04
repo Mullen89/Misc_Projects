@@ -24,12 +24,15 @@ public class Player extends Creature {
         }
         if (game.getKeyManager().down) {
             y += 3;
+            System.out.println("DOWN");
         }
         if (game.getKeyManager().left) {
             x -= 3;
+            System.out.println("LEFT");
         }
         if (game.getKeyManager().right) {
             x += 3;
+            System.out.println("RIGHT");
         }
     }
 
