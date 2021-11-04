@@ -2,7 +2,13 @@ package states;
 
 import java.awt.Graphics;
 
+import main.Game;
+
 public class SettingsMenuState extends StateManager {
+
+    public SettingsMenuState(Game game) {
+        super(game);
+    }
 
     @Override
     public void tick() {

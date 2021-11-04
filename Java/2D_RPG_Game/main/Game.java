@@ -4,7 +4,10 @@ import display.Display;
 import graphics.Assets;
 import graphics.ImageLoader;
 import graphics.SpriteSheet;
+import input.KeyManager;
 import states.GameState;
+import states.MainMenuState;
+import states.SettingsMenuState;
 import states.StateManager;
 
 import java.awt.image.BufferStrategy;
@@ -16,12 +19,17 @@ public class Game implements Runnable {
 
     private Thread thread;
     private Display display;
-    private boolean running;
+    private boolean running = false;
     private BufferStrategy bs;
     private Graphics g;
 
     // States
     private StateManager gameState;
+    private StateManager menuState;
+    private StateManager settingsState;
+
+    // Input
+    private KeyManager keyManager;
 
     private String title;
     private int height;
@@ -31,9 +39,12 @@ public class Game implements Runnable {
         this.title = title;
         this.height = height;
         this.width = width;
+        keyManager = new KeyManager();
     }
 
     private void tick() {
+        keyManager.tick();
+
         if (StateManager.getCurrentState() != null) {
             StateManager.getCurrentState().tick();
         }
@@ -46,15 +57,8 @@ public class Game implements Runnable {
             return;
         }
         g = bs.getDrawGraphics();
+        clear(g);
 
-        // Draws out the terrain
-        // for (int i = 0; i < display.getWidth(); i += 35) {
-        // for (int j = 0; j < display.getHeight(); j += 35) {
-        // g.drawImage(Assets.grass, i, j, null);
-        // }
-        // }
-
-        // Draws player
         if (StateManager.getCurrentState() != null) {
             StateManager.getCurrentState().render(g);
         }
@@ -63,15 +67,14 @@ public class Game implements Runnable {
         g.dispose();
     }
 
-    private void clear(Graphics g) {
-        g.clearRect(0, 0, width, height);
-    }
-
     private void init() {
         display = new Display(title, height, width);
+        display.getFrame().addKeyListener(keyManager);
         Assets.init();
 
-        gameState = new GameState();
+        gameState = new GameState(this);
+        menuState = new MainMenuState(this);
+        settingsState = new SettingsMenuState(this);
         StateManager.setState(gameState);
     }
 
@@ -84,15 +87,26 @@ public class Game implements Runnable {
         double delta = 0;
         long now;
         long lastTime = System.nanoTime();
+        long timer = 0;
+        int ticks = 0;
 
         while (running) {
             now = System.nanoTime();
-            ;
             delta += (now - lastTime) / timePerTick;
+            timer += now - lastTime;
+            lastTime = now;
 
             if (delta >= 1) {
                 tick();
                 render();
+                delta--;
+                ticks++;
+            }
+
+            if (timer >= 1000000000) {
+                System.out.println("Ticks and Frames: " + ticks);
+                ticks = 0;
+                timer = 0;
             }
         }
         stop();
@@ -115,5 +129,13 @@ public class Game implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public KeyManager getKeyManager() {
+        return keyManager;
+    }
+
+    private void clear(Graphics g) {
+        g.clearRect(0, 0, width, height);
     }
 }
