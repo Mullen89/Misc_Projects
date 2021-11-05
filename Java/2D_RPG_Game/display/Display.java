@@ -10,8 +10,7 @@ public class Display {
     private Canvas canvas;
 
     private String title;
-    private int height;
-    private int width;
+    private int height, width;
 
     public Display(String title, int height, int width) {
         this.title = title;

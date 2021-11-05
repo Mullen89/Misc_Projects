@@ -12,33 +12,42 @@ public class Player extends Creature {
     private Game game;
 
     public Player(Game game, float x, float y) {
-        super(x, y);
+        super(x, y, Creature.DEFAULT_CREATURE_HEIGHT, Creature.DEFAULT_CREATURE_HEIGHT);
         this.game = game;
+    }
+
+    public void getInput() {
+        xMove = 0;
+        yMove = 0;
+
+        if (game.getKeyManager().up) {
+            yMove = -speed;
+            System.out.println("UP");
+        }
+        if (game.getKeyManager().down) {
+            yMove = speed;
+            System.out.println("DOWN");
+        }
+        if (game.getKeyManager().left) {
+            xMove = -speed;
+            System.out.println("LEFT");
+        }
+        if (game.getKeyManager().right) {
+            xMove = speed;
+            System.out.println("RIGHT");
+        }
+
     }
 
     @Override
     public void tick() {
-        if (game.getKeyManager().up) {
-            y -= 3;
-            System.out.println("UP");
-        }
-        if (game.getKeyManager().down) {
-            y += 3;
-            System.out.println("DOWN");
-        }
-        if (game.getKeyManager().left) {
-            x -= 3;
-            System.out.println("LEFT");
-        }
-        if (game.getKeyManager().right) {
-            x += 3;
-            System.out.println("RIGHT");
-        }
+        getInput();
+        move();
     }
 
     @Override
     public void render(Graphics g) {
-        g.drawImage(Assets.player, (int) x, (int) y, null);
+        g.drawImage(Assets.player, (int) x, (int) y, height, width, null);
     }
 
 }
